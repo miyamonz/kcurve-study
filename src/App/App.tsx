@@ -1,18 +1,24 @@
-import { useState, useEffect } from "react";
+import { useAtom } from "jotai";
 import "./App.css";
-import { SvgCanvas } from "../SvgCanvas";
+import { windowSizeAtom } from "./windowSizeAtom";
+import { SVGProvider } from "../SVGContext";
 
 function App() {
-  const [size, setSize] = useState([window.innerWidth, window.innerHeight]);
-  useEffect(() => {
-    const callback = () => {
-      setSize([window.innerWidth, window.innerHeight]);
-    };
-    window.addEventListener("resize", callback);
-    return () => window.removeEventListener("resize", callback);
-  }, []);
+  const [{ width, height }] = useAtom(windowSizeAtom);
   return (
-      <SvgCanvas width={size[0]} height={size[1]} />
+    <SVGProvider viewBox={`0 0 ${width} ${height}`}>
+      <SVGContent />
+    </SVGProvider>
+  );
+}
+
+function SVGContent() {
+  return (
+    <>
+      <text x={0} y={20}>
+        κ-curves
+      </text>
+    </>
   );
 }
 
