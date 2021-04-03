@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useSVGMouse } from "./useSvgMouse";
+import { useSVGTransform } from "./useSVGTransform";
 import { mouseAtom } from "./mouseAtom";
 import { atom, useAtom } from "jotai";
 
@@ -28,7 +28,7 @@ export const SVGProvider: React.FC<Props> = ({ children, ...props }) => {
   );
 };
 
-type PointFn = ReturnType<typeof useSVGMouse>;
+type PointFn = ReturnType<typeof useSVGTransform>;
 const transformContext = React.createContext<PointFn>(null!);
 export function useTransform() {
   return useContext(transformContext);
@@ -36,7 +36,7 @@ export function useTransform() {
 
 const SVGInside: React.FC<{ elm: SVGSVGElement }> = ({ elm, children }) => {
   const [event] = useAtom(mouseEventAtom);
-  const transform = useSVGMouse(elm);
+  const transform = useSVGTransform(elm);
 
   const [, setPos] = useAtom(mouseAtom);
   React.useEffect(() => {

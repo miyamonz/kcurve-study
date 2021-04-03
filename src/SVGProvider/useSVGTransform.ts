@@ -9,7 +9,7 @@ const screenToSvg = (svg: SVGSVGElement) => (e: Event) => {
   return { x: p.x, y: p.y };
 };
 
-export function useSVGMouse(svgElem: SVGSVGElement) {
+export function useSVGTransform(svgElem: SVGSVGElement) {
   const fn = React.useCallback((e: Event) => screenToSvg(svgElem)(e), [
     svgElem,
   ]);
