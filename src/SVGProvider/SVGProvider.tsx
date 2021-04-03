@@ -1,56 +1,53 @@
 import React, { useContext } from "react";
 import { useSVGMouse } from "./useSvgMouse";
-import { useSetMousePosition } from "./atoms";
+import { mouseAtom } from "./mouseAtom";
 import { atom, useAtom } from "jotai";
 
 type Event = React.MouseEvent<SVGSVGElement, MouseEvent>;
-const eventContext = React.createContext<Event>(null!);
+const mouseEventAtom = atom<Event>(null!);
 export function useMouseEvent() {
-  return useContext(eventContext);
+  const [e] = useAtom(mouseEventAtom);
+  return e;
 }
+
+type Props = {} & JSX.IntrinsicElements["svg"];
+export const SVGProvider: React.FC<Props> = ({ children, ...props }) => {
+  const [, setEvent] = useAtom(mouseEventAtom);
+  const ref = React.useRef<SVGSVGElement>(null);
+
+  return (
+    <svg
+      ref={ref}
+      {...props}
+      onMouseDown={setEvent}
+      onMouseMove={setEvent}
+      onMouseUp={setEvent}
+    >
+      {ref.current && <SVGInside elm={ref.current}>{children}</SVGInside>}
+    </svg>
+  );
+};
 
 type PointFn = ReturnType<typeof useSVGMouse>;
 const transformContext = React.createContext<PointFn>(null!);
 export function useTransform() {
   return useContext(transformContext);
 }
-export const transformAtom = atom({
-  fn: (() => ({ x: 0, y: 0 })) as PointFn,
-});
 
-type Props = {} & JSX.IntrinsicElements["svg"];
-export const SVGProvider: React.FC<Props> = ({ children, ...props }) => {
-  const [event, setEvent] = React.useState<Event>(null!);
-  const ref = React.useRef<SVGSVGElement>(null);
-  const transform = useSVGMouse(ref.current as any);
-  const [, setTransform] = useAtom(transformAtom);
-  React.useEffect(() => {
-    if (transform !== null) {
-      setTransform({ fn: transform });
-    }
-  }, [transform]);
+const SVGInside: React.FC<{ elm: SVGSVGElement }> = ({ elm, children }) => {
+  const [event] = useAtom(mouseEventAtom);
+  const transform = useSVGMouse(elm);
 
-  const setPos = useSetMousePosition();
+  const [, setPos] = useAtom(mouseAtom);
   React.useEffect(() => {
-    if (transform !== null && event !== null) {
+    if (event !== null) {
       const pos = transform(event);
-      setPos({ x: pos.x, y: pos.y });
+      setPos(pos);
     }
   }, [setPos, event, transform]);
-
   return (
-    <eventContext.Provider value={event}>
-      <transformContext.Provider value={transform}>
-        <svg
-          ref={ref}
-          onMouseDown={setEvent}
-          onMouseMove={setEvent}
-          onMouseUp={setEvent}
-          {...props}
-        >
-          {children}
-        </svg>
-      </transformContext.Provider>
-    </eventContext.Provider>
+    <transformContext.Provider value={transform}>
+      {children}
+    </transformContext.Provider>
   );
 };

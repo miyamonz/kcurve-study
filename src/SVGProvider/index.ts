@@ -1,12 +1,4 @@
-export {
-  SVGProvider,
-  useMouseEvent,
-  transformAtom,
-  useTransform,
-} from "./SVGProvider";
-export { mouseAtom, useMousePosition } from "./atoms";
-
-export { useEvent } from "./useEvent";
-export type { Event } from "./useEvent";
+export { SVGProvider, useMouseEvent, useTransform } from "./SVGProvider";
+export { mouseAtom } from "./mouseAtom";
 
 export { useMouseStream } from "./useMouseStream";

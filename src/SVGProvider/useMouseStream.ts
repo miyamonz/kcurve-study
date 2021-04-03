@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useMousePosition } from "./atoms";
+import { useAtom } from "jotai";
+import { mouseAtom } from "./mouseAtom";
 import { useMouseEvent } from "./SVGProvider";
 import type { Position } from "../Position";
 
@@ -12,7 +13,7 @@ export function useMouseStream(
   const [drag, setDrag] = useState<Position | null>(null);
   const [end, setEnd] = useState<Position | null>(null);
   const e = useMouseEvent();
-  const position = useMousePosition();
+  const [position] = useAtom(mouseAtom);
 
   useEffect(() => {
     if (e === null) return;
