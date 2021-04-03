@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import "./App.css";
 import { windowSizeAtom } from "./windowSizeAtom";
-import { SVGProvider } from "../SVGContext";
+import { SVGProvider } from "../SVGProvider";
 
 function App() {
   const [{ width, height }] = useAtom(windowSizeAtom);

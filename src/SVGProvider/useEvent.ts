@@ -1,6 +1,6 @@
 import React from "react";
 import { useAtom, WritableAtom } from "jotai";
-import { useMouseEvent, useTransform } from "./SVGContext";
+import { useMouseEvent, useTransform } from "./SVGProvider";
 
 export type Event = React.MouseEvent<SVGSVGElement, MouseEvent> & {
   position: {

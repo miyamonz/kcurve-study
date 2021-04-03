@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMousePosition } from "./atoms";
-import { useMouseEvent } from "./SVGContext";
+import { useMouseEvent } from "./SVGProvider";
 import type { Position } from "../Position";
 
 export function useMouseStream(

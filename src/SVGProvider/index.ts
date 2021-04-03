@@ -3,7 +3,7 @@ export {
   useMouseEvent,
   transformAtom,
   useTransform,
-} from "./SVGContext";
+} from "./SVGProvider";
 export { mouseAtom, useMousePosition } from "./atoms";
 
 export { useEvent } from "./useEvent";
