@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useRef } from "react";
 import { useAtom } from "jotai";
 import { mouseAtom } from "./mouseAtom";
 import { useMouseEvent } from "./SVGProvider";
@@ -9,33 +9,51 @@ export function useMouseStream(
   dragCond = true,
   endCond = true
 ) {
-  const [start, setStart] = useState<Position | null>(null);
-  const [drag, setDrag] = useState<Position | null>(null);
-  const [end, setEnd] = useState<Position | null>(null);
+  const startRef = useRef<Position | null>(null);
+  const dragRef = useRef<Position | null>(null);
+  const endRef = useRef<Position | null>(null);
+
   const e = useMouseEvent();
   const [position] = useAtom(mouseAtom);
 
-  useEffect(() => {
-    if (e === null) return;
+  if (e !== null) {
     if (e.type === "mousedown" && startCond) {
-      setDrag(null);
-      setEnd(null);
-      setStart(position);
+      startRef.current = position;
+      dragRef.current = null;
+      endRef.current = null;
     } else if (
       e.type === "mousemove" &&
       dragCond &&
-      start !== null &&
-      end === null
+      startRef.current !== null &&
+      endRef.current === null
     ) {
-      setDrag(position);
-    } else if (e.type === "mouseup" && endCond && start !== null) {
-      setEnd(position);
-    } else if (e.type === "mousemove" && end !== null) {
-      setStart(null);
-      setDrag(null);
-      setEnd(null);
+      dragRef.current = position;
+    } else if (e.type === "mouseup" && endCond && startRef.current !== null) {
+      endRef.current = position;
+    } else if (e.type === "mousemove" && endRef.current !== null) {
+      startRef.current = null;
+      dragRef.current = null;
+      endRef.current = null;
     }
-  }, [e, start, drag, end]);
+  }
 
-  return { start, drag, end };
+  const start = startRef.current;
+  const drag = dragRef.current;
+  const end = endRef.current;
+
+  const type =
+    start !== null && drag === null && end === null
+      ? "down"
+      : drag !== null && end === null
+      ? "drag"
+      : end !== null
+      ? "up"
+      : "move";
+
+  return {
+    type,
+    start,
+    drag,
+    end,
+  };
 }
